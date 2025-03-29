@@ -1,0 +1,51 @@
+const prisma = require('../utils/prisma.cjs');
+
+// Create a new playlist
+const createPlaylist = async (req, res) => {
+  try {
+    const { name } = req.body;
+    const playlist = await prisma.playlist.create({
+      data: { name, userId: req.user.id },
+    });
+    res.json({ message: 'Playlist created', playlist });
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating playlist', error: error.message });
+  }
+};
+
+// Delete a playlist by ID
+const deletePlaylist = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await prisma.playlist.delete({ where: { id: Number(id) } });
+    res.json({ message: 'Playlist deleted' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting playlist', error: error.message });
+  }
+};
+
+// Get all playlists for the logged-in user
+const getUserPlaylists = async (req, res) => {
+  try {
+    const playlists = await prisma.playlist.findMany({ where: { userId: req.user.id } });
+    res.json(playlists);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching playlists', error: error.message });
+  }
+};
+
+// Get all songs in a specific playlist
+const getPlaylistSongs = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const songs = await prisma.songPlaylistMap.findMany({
+      where: { playlistId: Number(id) },
+      include: { song: true },
+    });
+    res.json(songs);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching songs', error: error.message });
+  }
+};
+
+module.exports = { createPlaylist, deletePlaylist, getUserPlaylists, getPlaylistSongs };

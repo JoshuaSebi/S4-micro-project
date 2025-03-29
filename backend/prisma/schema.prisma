@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  age        Int?
+  email      String   @unique
+  password   String
+  createdAt  DateTime @default(now())
+  playlists  Playlist[]
+}
+
+model Playlist {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @db.ObjectId
+  name       String
+  songCount  Int      @default(0)
+  createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  songs      SongPlaylistMap[]
+}
+
+model Song {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  artistId   String   @db.ObjectId
+  songLink   String?
+  duration   Float?
+  artist     Artist   @relation(fields: [artistId], references: [id], onDelete: Cascade)
+  playlists  SongPlaylistMap[]
+}
+
+model SongPlaylistMap {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  songId     String   @db.ObjectId
+  playlistId String   @db.ObjectId
+  addedAt    DateTime @default(now())
+  song       Song     @relation(fields: [songId], references: [id], onDelete: Cascade)
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+}
+
+model Artist {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  info       String?
+  moreInfoLink String?
+  songs      Song[]
+}
