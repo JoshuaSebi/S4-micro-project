@@ -37,6 +37,16 @@ const login = async (req, res) => {
   }
 };
 
+// Logout a user
+const logout = async (req, res) => {
+  try {
+    res.clearCookie('token');
+    res.json({ message: 'Logout successful' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error during logout', error: error.message });
+  }
+};
+
 // Delete a user account
 const deleteUser = async (req, res) => {
   try {
@@ -48,4 +58,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { register, login, deleteUser };
+module.exports = { register, login, deleteUser, logout };

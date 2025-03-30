@@ -1,5 +1,5 @@
 {
-  "name": "mortuary-management-system-backend",
+  "name": "music-playlist-organizer",
   "version": "1.0.0",
   "main": "src/app.cjs",
   "type": "commonjs",
