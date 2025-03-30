@@ -8,11 +8,15 @@ const authRoutes = require('./routes/auth.routes.cjs');
 const playlistRoutes = require('./routes/playlist.routes.cjs');
 const songRoutes = require('./routes/song.routes.cjs');
 const userRoutes = require('./routes/user.routes.cjs');
+const addSongRoutes = require('./routes/addSong.routes.cjs');
 
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000', 
+    credentials: true 
+  }));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
@@ -22,6 +26,9 @@ app.use('/api/auth', authRoutes);
 app.use('/api/playlist', playlistRoutes);
 app.use('/api/song', songRoutes);
 app.use('/api/user', userRoutes);
+app.use('/api/dev', addSongRoutes);  // Isolated under /dev
+
+
 
 // Health check route
 app.get('/health', (req, res) => res.json({ status: 'ok' }));

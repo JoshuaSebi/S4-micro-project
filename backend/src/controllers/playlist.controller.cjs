@@ -17,7 +17,8 @@ const createPlaylist = async (req, res) => {
 const deletePlaylist = async (req, res) => {
   try {
     const { id } = req.params;
-    await prisma.playlist.delete({ where: { id: Number(id) } });
+
+    await prisma.playlist.delete({ where: { id: id } });
     res.json({ message: 'Playlist deleted' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting playlist', error: error.message });
@@ -39,7 +40,7 @@ const getPlaylistSongs = async (req, res) => {
   try {
     const { id } = req.params;
     const songs = await prisma.songPlaylistMap.findMany({
-      where: { playlistId: Number(id) },
+      where: { playlistId: id },
       include: { song: true },
     });
     res.json(songs);

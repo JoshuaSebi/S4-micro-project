@@ -4,7 +4,7 @@ const prisma = require('../utils/prisma.cjs');
 const addSongToPlaylist = async (req, res) => {
   try {
     const { songId, playlistId } = req.body;
-    await prisma.songPlaylistMap.create({ data: { songId: Number(songId), playlistId: Number(playlistId) } });
+    await prisma.songPlaylistMap.create({ data: { songId: songId, playlistId: playlistId } });
     res.json({ message: 'Song added to playlist' });
   } catch (error) {
     res.status(500).json({ message: 'Error adding song to playlist', error: error.message });
@@ -15,7 +15,7 @@ const addSongToPlaylist = async (req, res) => {
 const removeSongFromPlaylist = async (req, res) => {
   try {
     const { songId, playlistId } = req.body;
-    await prisma.songPlaylistMap.deleteMany({ where: { songId: Number(songId), playlistId: Number(playlistId) } });
+    await prisma.songPlaylistMap.deleteMany({ where: { songId: songId, playlistId: playlistId } });
     res.json({ message: 'Song removed from playlist' });
   } catch (error) {
     res.status(500).json({ message: 'Error removing song from playlist', error: error.message });

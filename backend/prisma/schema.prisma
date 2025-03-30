@@ -48,7 +48,7 @@ model SongPlaylistMap {
 
 model Artist {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  name       String
+  name       String 
   info       String?
   moreInfoLink String?
   songs      Song[]

@@ -16,6 +16,14 @@ const register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({ data: { name, email, password: hashedPassword, age } });
     const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
+
+    res.cookie('music_token', token, {
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production', 
+      sameSite: 'strict', 
+      maxAge: 24 * 60 * 60 * 1000 
+    });
+
     res.status(201).json({ message: 'User created', token, user });
   } catch (error) {
     res.status(500).json({ message: 'Error creating user', error: error.message });
@@ -31,6 +39,14 @@ const login = async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
     const token = jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '24h' });
+    
+    res.cookie('music_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000
+    });
+    
     res.json({ message: 'Login successful', token, user });
   } catch (error) {
     res.status(500).json({ message: 'Error during login', error: error.message });
@@ -40,7 +56,7 @@ const login = async (req, res) => {
 // Logout a user
 const logout = async (req, res) => {
   try {
-    res.clearCookie('token');
+    res.clearCookie('music_token');
     res.json({ message: 'Logout successful' });
   } catch (error) {
     res.status(500).json({ message: 'Error during logout', error: error.message });
