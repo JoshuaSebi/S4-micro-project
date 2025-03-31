@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -14,71 +13,64 @@ import { Headphones, Mail, Lock, User, Calendar } from "lucide-react"
 export default function LoginForm() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
-  const [loginData, setLoginData] = useState({
-    email: "",
-    password: "",
-  })
-  const [registerData, setRegisterData] = useState({
-    name: "",
-    age: "",
-    email: "",
-    password: "",
-  })
+  const [loginData, setLoginData] = useState({ email: "", password: "" })
+  const [registerData, setRegisterData] = useState({ name: "", email: "", password: "", age: "" })
 
   const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
-    setLoginData((prev) => ({
-      ...prev,
-      [id]: value,
-    }))
+    setLoginData((prev) => ({ ...prev, [id]: value }))
   }
 
   const handleRegisterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
-    setRegisterData((prev) => ({
-      ...prev,
-      [id.replace("register-", "")]: value,
-    }))
+    setRegisterData((prev) => ({ ...prev, [id.replace("register-", "")]: value }))
   }
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-
-    // In a real app, you would validate credentials against your backend
-    // For demo purposes, we'll just simulate a successful login
-    setTimeout(() => {
-      // Store user info in localStorage
-      const userInfo = {
-        name: "Demo User", // In a real app, you'd get this from your backend
-        email: loginData.email,
-        age: "25", // Placeholder
-      }
-      localStorage.setItem("userInfo", JSON.stringify(userInfo))
-
-      setIsLoading(false)
-      router.push("/dashboard")
-    }, 1000)
-  }
-
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(loginData),
+        credentials: "include", // Important for cookies
+      });
+      
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Login failed");
+  
+      localStorage.setItem("userInfo", JSON.stringify(data.user));
+      router.push("/dashboard");
+    } catch (error) {
+      console.error("Login error:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
 
-    // In a real app, you would send registration data to your backend
-    // For demo purposes, we'll just simulate a successful registration
-    setTimeout(() => {
-      // Store user info in localStorage
-      const userInfo = {
-        name: registerData.name,
-        email: registerData.email,
-        age: registerData.age,
-      }
-      localStorage.setItem("userInfo", JSON.stringify(userInfo))
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({"name": registerData.name, "email" : registerData.email, "password": registerData.password, "age": Number(registerData.age)})
+      })
 
-      setIsLoading(false)
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.message || "Registration failed")
+
+      localStorage.setItem("userInfo", JSON.stringify(data.user))
       router.push("/dashboard")
-    }, 1000)
+    } catch (error ) {
+      console.error("Register error:", error)
+      alert(error.message)
+    }
+    setIsLoading(false)
   }
 
   return (
@@ -100,158 +92,29 @@ export default function LoginForm() {
       <CardContent>
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2 mb-6">
-            <TabsTrigger value="login" className="data-[state=active]:bg-purple-600">
-              Login
-            </TabsTrigger>
-            <TabsTrigger value="register" className="data-[state=active]:bg-purple-600">
-              Register
-            </TabsTrigger>
+            <TabsTrigger value="login" className="data-[state=active]:bg-purple-600">Login</TabsTrigger>
+            <TabsTrigger value="register" className="data-[state=active]:bg-purple-600">Register</TabsTrigger>
           </TabsList>
           <TabsContent value="login">
             <form onSubmit={handleLogin} className="space-y-4 mt-4">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-zinc-300">
-                  Email
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="your@email.com"
-                    required
-                    value={loginData.email}
-                    onChange={handleLoginChange}
-                    className="pl-10 bg-zinc-800/50 border-zinc-700 focus:border-purple-500"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-zinc-300">
-                  Password
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
-                  <Input
-                    id="password"
-                    type="password"
-                    required
-                    value={loginData.password}
-                    onChange={handleLoginChange}
-                    className="pl-10 bg-zinc-800/50 border-zinc-700 focus:border-purple-500"
-                  />
-                </div>
-              </div>
-              <Button
-                type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <div className="audio-wave mr-2">
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </div>
-                    <span>Logging in...</span>
-                  </div>
-                ) : (
-                  "Login"
-                )}
-              </Button>
+              <Label>Email</Label>
+              <Input id="email" type="email" required value={loginData.email} onChange={handleLoginChange} />
+              <Label>Password</Label>
+              <Input id="password" type="password" required value={loginData.password} onChange={handleLoginChange} />
+              <Button type="submit" disabled={isLoading}>{isLoading ? "Logging in..." : "Login"}</Button>
             </form>
           </TabsContent>
           <TabsContent value="register">
             <form onSubmit={handleRegister} className="space-y-4 mt-4">
-              <div className="space-y-2">
-                <Label htmlFor="register-name" className="text-zinc-300">
-                  Full Name
-                </Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
-                  <Input
-                    id="register-name"
-                    placeholder="John Doe"
-                    required
-                    value={registerData.name}
-                    onChange={handleRegisterChange}
-                    className="pl-10 bg-zinc-800/50 border-zinc-700 focus:border-purple-500"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="register-age" className="text-zinc-300">
-                  Age
-                </Label>
-                <div className="relative">
-                  <Calendar className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
-                  <Input
-                    id="register-age"
-                    type="number"
-                    placeholder="25"
-                    required
-                    value={registerData.age}
-                    onChange={handleRegisterChange}
-                    className="pl-10 bg-zinc-800/50 border-zinc-700 focus:border-purple-500"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="register-email" className="text-zinc-300">
-                  Email
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
-                  <Input
-                    id="register-email"
-                    type="email"
-                    placeholder="your@email.com"
-                    required
-                    value={registerData.email}
-                    onChange={handleRegisterChange}
-                    className="pl-10 bg-zinc-800/50 border-zinc-700 focus:border-purple-500"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="register-password" className="text-zinc-300">
-                  Password
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-zinc-500" />
-                  <Input
-                    id="register-password"
-                    type="password"
-                    required
-                    value={registerData.password}
-                    onChange={handleRegisterChange}
-                    className="pl-10 bg-zinc-800/50 border-zinc-700 focus:border-purple-500"
-                  />
-                </div>
-              </div>
-              <Button
-                type="submit"
-                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700"
-                disabled={isLoading}
-              >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <div className="audio-wave mr-2">
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                      <span></span>
-                    </div>
-                    <span>Creating account...</span>
-                  </div>
-                ) : (
-                  "Create account"
-                )}
-              </Button>
+              <Label>Full Name</Label>
+              <Input id="register-name" required value={registerData.name} onChange={handleRegisterChange} />
+              <Label>Age</Label>
+              <Input id="register-age" type="number" required value={registerData.age} onChange={handleRegisterChange} />
+              <Label>Email</Label>
+              <Input id="register-email" type="email" required value={registerData.email} onChange={handleRegisterChange} />
+              <Label>Password</Label>
+              <Input id="register-password" type="password" required value={registerData.password} onChange={handleRegisterChange} />
+              <Button type="submit" disabled={isLoading}>{isLoading ? "Creating account..." : "Create account"}</Button>
             </form>
           </TabsContent>
         </Tabs>
@@ -262,4 +125,3 @@ export default function LoginForm() {
     </Card>
   )
 }
-

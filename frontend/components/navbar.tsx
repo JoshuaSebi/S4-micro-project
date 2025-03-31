@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Headphones, LogOut, User, Home, Music, Library } from "lucide-react"
+import { cookies } from "next/headers"
 
 interface NavbarProps {
   userName: string
@@ -50,12 +51,21 @@ export default function Navbar({ userName }: NavbarProps) {
   }, [])
 
   const handleLogout = () => {
-    // Clear user info from localStorage
-    localStorage.removeItem("userInfo")
-    // Redirect to login page
-    router.push("/")
-  }
+    // Function to delete all cookies
+    document.cookie.split(";").forEach((cookie) => {
+        document.cookie = cookie
+            .replace(/^ +/, "") // Remove leading spaces
+            .replace(/=.*/, "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;");
+    });
 
+    // If using localStorage or sessionStorage, clear them
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Redirect to login page
+    const router = useRouter();
+    router.push("/");
+};
   return (
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${

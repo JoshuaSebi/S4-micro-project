@@ -1,17 +1,21 @@
 const prisma = require('../utils/prisma.cjs');
 
-// Create a new playlist
 const createPlaylist = async (req, res) => {
   try {
-    const { name } = req.body;
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    
+    const { name, songCount } = req.body;
     const playlist = await prisma.playlist.create({
-      data: { name, userId: req.user.id },
+      data: { name, userId: req.user.id, songCount },
     });
-    res.json({ message: 'Playlist created', playlist });
+    res.json({ message: "Playlist created", playlist });
   } catch (error) {
-    res.status(500).json({ message: 'Error creating playlist', error: error.message });
+    res.status(500).json({ message: "Error creating playlist", error: error.message });
   }
 };
+
 
 // Delete a playlist by ID
 const deletePlaylist = async (req, res) => {
@@ -29,11 +33,12 @@ const deletePlaylist = async (req, res) => {
 const getUserPlaylists = async (req, res) => {
   try {
     const playlists = await prisma.playlist.findMany({ where: { userId: req.user.id } });
-    res.json(playlists);
+    res.json({ playlists }); // Ensure response structure matches frontend expectations
   } catch (error) {
     res.status(500).json({ message: 'Error fetching playlists', error: error.message });
   }
 };
+
 
 // Get all songs in a specific playlist
 const getPlaylistSongs = async (req, res) => {

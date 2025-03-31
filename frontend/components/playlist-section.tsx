@@ -1,8 +1,8 @@
 "use client"
-
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import axios from "axios";
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -11,34 +11,72 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
-import { PlusCircle, Trash2, Music, ListMusic } from "lucide-react"
-import type { Playlist } from "@/lib/types"
+} from "@/components/ui/dialog";
+import { PlusCircle, Trash2, Music, ListMusic } from "lucide-react";
+import type { Playlist } from "@/lib/types";
 
 export default function PlaylistSection() {
-  const [playlists, setPlaylists] = useState<Playlist[]>([
-    { id: "1", name: "My Favorites", songCount: 12 },
-    { id: "2", name: "Workout Mix", songCount: 8 },
-  ])
-  const [newPlaylistName, setNewPlaylistName] = useState("")
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [playlists, setPlaylists] = useState<Playlist[]>([]);
+  const [newPlaylistName, setNewPlaylistName] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-  const handleCreatePlaylist = () => {
-    if (newPlaylistName.trim()) {
-      const newPlaylist: Playlist = {
-        id: Date.now().toString(),
-        name: newPlaylistName,
-        songCount: 0,
-      }
-      setPlaylists([...playlists, newPlaylist])
-      setNewPlaylistName("")
-      setIsDialogOpen(false)
+  // Fetch user playlists
+  const fetchPlaylists = async () => {
+    try {
+      const response = await axios.get("http://localhost:5000/api/playlist/user-playlists", {
+        withCredentials: true, // Ensure cookies are sent
+      });
+      setPlaylists(response.data.playlists);
+      console.log(playlists)
+    } catch (error) {
+      console.error("Error fetching playlists:", error);
     }
-  }
+  };
 
-  const handleDeletePlaylist = (id: string) => {
-    setPlaylists(playlists.filter((playlist) => playlist.id !== id))
-  }
+  useEffect(() => {
+    fetchPlaylists();
+  }, []);
+  const handleCreatePlaylist = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/playlist/create",
+        {
+          name: newPlaylistName,
+          songCount: 0,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      
+      if (response.data?.playlist) {
+        setPlaylists((prev) => [...(prev || []), response.data.playlist]);
+      } else {
+        console.error("Playlist data is missing from response:", response.data);
+      }
+  
+      setIsDialogOpen(false);
+    } catch (error) {
+      console.error("Error creating playlist:", error);
+    }
+  };
+  
+
+  const handleDeletePlaylist = async (id: string | undefined) => {
+    if (!id) return;
+  
+    try {
+      await axios.delete(`http://localhost:5000/api/playlist/delete/${id}`, {
+        withCredentials: true, // Ensures authentication token is sent
+      });
+  
+      // Remove playlist from UI
+      setPlaylists((prev) => prev.filter((playlist) => playlist.id !== id));
+    } catch (error) {
+      console.error("Error deleting playlist:", error);
+    }
+  };
+  
 
   return (
     <section className="mb-12">
@@ -88,7 +126,7 @@ export default function PlaylistSection() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {playlists.map((playlist) => (
+        {playlists && playlists.map((playlist) => (
           <div
             key={playlist.id}
             className="bg-zinc-800/30 p-5 rounded-lg border border-zinc-700/50 hover:border-purple-500/50 flex flex-col hover-glow transition-all duration-300"
@@ -127,6 +165,5 @@ export default function PlaylistSection() {
         ))}
       </div>
     </section>
-  )
+  );
 }
-

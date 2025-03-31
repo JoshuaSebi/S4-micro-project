@@ -20,7 +20,7 @@ export interface Song {
 }
 
 export interface Playlist {
-  id: string
+  id?:string
   name: string
   songCount: number
   cover?: string
