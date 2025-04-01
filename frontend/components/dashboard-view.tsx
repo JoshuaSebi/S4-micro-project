@@ -177,7 +177,7 @@ export default function DashboardView() {
                     <DialogTrigger asChild>
                       <Button
                         variant="outline"
-                        className="text-white border-zinc-600 hover:bg-zinc-700"
+                        className="text-zinc-600 border-zinc-600 hover:bg-zinc-700"
                         onClick={() => openDialog(song)}
                       >
                         Add to Playlist
