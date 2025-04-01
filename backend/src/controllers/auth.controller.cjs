@@ -30,6 +30,7 @@ const register = async (req, res) => {
   }
 };
 
+
 // Login an existing user
 const login = async (req, res) => {
   try {

@@ -26,7 +26,7 @@ export default function PlaylistSection() {
       const response = await axios.get("http://localhost:5000/api/playlist/user-playlists", {
         withCredentials: true, // Ensure cookies are sent
       });
-      setPlaylists(response.data.playlists);
+      setPlaylists(response.data.formattedPlaylists);
       console.log(playlists)
     } catch (error) {
       console.error("Error fetching playlists:", error);

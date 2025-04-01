@@ -42,7 +42,7 @@ const addMusicData = async (req, res) => {
         name: "Madhu Pakaru",
         artistName: "Vineeth Sreenivasan",
         songLink: "https://www.youtube.com/watch?v=0x3Ql7H0Wxw", // Actual link
-        duration: 4.10
+        duration: 4.11
       },
       
       // Ed Sheeran
