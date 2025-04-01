@@ -53,17 +53,20 @@ export default function Navbar({ userName }: NavbarProps) {
   const handleLogout = () => {
     // Function to delete all cookies
     document.cookie.split(";").forEach((cookie) => {
-        document.cookie = cookie
-            .replace(/^ +/, "") // Remove leading spaces
-            .replace(/=.*/, "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;");
-    });
+      document.cookie = cookie
+          .replace(/^ +/, "") // Trim leading spaces
+          .replace(/=.*/, "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"); // Expire the cookie
+
+    
+  });
+  
 
     // If using localStorage or sessionStorage, clear them
     localStorage.clear();
     sessionStorage.clear();
 
     // Redirect to login page
-    const router = useRouter();
+    // const router = useRouter();
     router.push("/");
 };
   return (

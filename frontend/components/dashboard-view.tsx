@@ -80,8 +80,6 @@
 //     }
 //   };
 
-
-
 //   // Update the openDialog function
 //   const openDialog = async (song: Song) => {
 //     setSelectedSong(song);
@@ -169,7 +167,7 @@
 //                     )}
 //                   </div>
 //                   <Dialog>
-                    
+
 //                     <DialogTrigger asChild>
 //                       <Button
 //                         variant="outline"
@@ -225,7 +223,12 @@ import { Button } from "@/components/ui/button";
 import Navbar from "@/components/navbar";
 import PlaylistSection from "@/components/playlist-section";
 import axios from "axios";
-import { Dialog, DialogContent, DialogTrigger, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Song {
   id: string;
@@ -313,18 +316,19 @@ export default function DashboardView() {
 
   const addToPlaylist = async () => {
     if (!selectedSong || !selectedPlaylist) return;
+    console.log(selectedSong.name, selectedPlaylist.id);
 
     try {
       await axios.post(
         "http://localhost:5000/api/songs/add-to-playlist",
         {
           songName: selectedSong.name,
-          playlistId: selectedPlaylist.id,
+          playlistId: selectedPlaylist,
         },
         { withCredentials: true }
       );
       alert("Song added to playlist successfully!");
-      setSelectedPlaylist({});
+      // setSelectedPlaylist({});
       setSelectedSong(null);
     } catch (error) {
       console.error("Error adding song to playlist:", error);
@@ -367,31 +371,58 @@ export default function DashboardView() {
       <main className="container mx-auto px-4 py-12">
         {searchResults.length > 0 && (
           <>
-            <h2 className="text-3xl font-bold text-white mb-4">Search Results</h2>
+            <h2 className="text-3xl font-bold text-white mb-4">
+              Search Results
+            </h2>
             <ul className="space-y-2">
               {searchResults.map((song) => (
-                <li key={song.id} className="flex items-center justify-between p-4 bg-zinc-800/50 rounded-lg">
+                <li
+                  key={song.id}
+                  className="flex items-center justify-between p-4 bg-zinc-800/50 rounded-lg"
+                >
                   <div>
                     <p className="text-white font-medium">{song.name}</p>
                     {song.artist && (
-                      <p className="text-zinc-400 text-sm">{song.artist.name}</p>
+                      <p className="text-zinc-400 text-sm">
+                        {song.artist.name}
+                      </p>
                     )}
                   </div>
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="outline" className="text-white border-zinc-600 hover:bg-zinc-700" onClick={() => openDialog(song)}>
+                      <Button
+                        variant="outline"
+                        className="text-white border-zinc-600 hover:bg-zinc-700"
+                        onClick={() => openDialog(song)}
+                      >
                         Add to Playlist
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="bg-zinc-900 border-zinc-700 text-white">
                       <DialogTitle>Select a Playlist</DialogTitle>
-                      <select className="w-full p-2 bg-zinc-800 border border-zinc-700 rounded text-white" value={selectedPlaylist} onChange={(e) => setSelectedPlaylist(e.target.value)}>
+                      <select
+                        className="w-full p-2 bg-zinc-800 border border-zinc-700 rounded text-white"
+                        value={selectedPlaylist}
+                        onChange={(e) => {
+                          setSelectedPlaylist(e.target.value);
+                          console.log(e.target.value); // Logs the value correctly
+                      }}
+                      
+                      >
+                        {/* {e.target.value} */}
                         <option value="">Choose a playlist...</option>
-                        {playlists && playlists.map((playlist) => (
-                          <option key={playlist.id} value={playlist.id}>{playlist.name} ({playlist.songCount} songs)</option>
-                        ))}
+                        {playlists &&
+                          playlists.map((playlist) => (
+                            <option key={playlist.id} value={playlist.id}>
+                              {playlist.name} ({playlist.songCount} songs)
+                            </option>
+                          ))}
                       </select>
-                      <Button className="w-full mt-4 bg-purple-600 hover:bg-purple-700" onClick={addToPlaylist} disabled={!selectedPlaylist}>
+                      <Button
+                        className="w-full mt-4 bg-purple-600 hover:bg-purple-700"
+                        onClick={addToPlaylist}
+                        disabled={!selectedPlaylist}
+                      >
                         Add to Playlist
                       </Button>
                     </DialogContent>

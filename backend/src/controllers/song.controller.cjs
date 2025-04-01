@@ -39,6 +39,7 @@ const songController = {
   addSongToPlaylist: async (req, res) => {
     try {
       const { songName, playlistId } = req.body;
+      console.log(req);
 
       // Validate input
       const songNameError = validateSongName(songName);
