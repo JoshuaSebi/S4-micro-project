@@ -104,13 +104,13 @@ export default function PlaylistSection() {
               value={newPlaylistName}
               onChange={(e) => setNewPlaylistName(e.target.value)}
               placeholder="My Awesome Playlist"
-              className="mt-4 bg-zinc-800/50 border-zinc-700 focus:border-purple-500"
+              className="mt-4 bg-zinc-800/50 border-zinc-700 focus:border-purple-500 text-white"
             />
             <DialogFooter className="mt-4">
               <Button
                 variant="outline"
                 onClick={() => setIsDialogOpen(false)}
-                className="border-zinc-700 text-zinc-300 hover:text-white hover:bg-zinc-800"
+                className="border-zinc-700 bg-gray-800 text-zinc-300 hover:text-white hover:bg-zinc-800"
               >
                 Cancel
               </Button>
@@ -144,11 +144,11 @@ export default function PlaylistSection() {
               <Button
                 variant="outline"
                 size="sm"
-                className="border-zinc-700 text-zinc-300 hover:text-white hover:border-purple-500 hover:bg-zinc-800/50"
+                className="border-zinc-700 bg-gray-800/35 text-zinc-300 hover:text-white hover:border-purple-500 hover:bg-zinc-800/50"
                 asChild
               >
                 <a href={`/playlist/${playlist.id}`}>
-                  <Music className="h-4 w-4 mr-2" />
+                  <Music className="h-4 w-4 mr-2 " />
                   View
                 </a>
               </Button>

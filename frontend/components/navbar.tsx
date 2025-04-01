@@ -75,7 +75,7 @@ export default function Navbar({ userName }: NavbarProps) {
         scrolled ? "glass-effect border-b border-purple-500/20" : "bg-transparent"
       }`}
     >
-      <div className="container flex h-16 items-center justify-between">
+      <div className="container flex h-16 items-center justify-between px-3">
         <div className="flex items-center gap-2">
           <div className="relative">
             <div
@@ -120,11 +120,8 @@ export default function Navbar({ userName }: NavbarProps) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-                <Avatar className="h-8 w-8 ring-2 ring-purple-500/50">
-                  <AvatarImage src="/placeholder.svg?height=32&width=32" alt={userName} />
-                  <AvatarFallback className="bg-gradient-to-br from-indigo-600 to-purple-700 text-white">
-                    {userName.charAt(0)}
-                  </AvatarFallback>
+                <Avatar className="h-8 w-8 ring-2 ring-purple-500/50  flex justify-center items-center bg-white">
+                 <User/>
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>

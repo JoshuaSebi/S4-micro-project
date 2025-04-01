@@ -44,15 +44,10 @@ export default function ArtistView({ artist }: ArtistViewProps) {
 
       <div className="relative">
         {/* Artist header with gradient overlay */}
-        <div className="relative h-80 overflow-hidden">
+        <div className="relative h-28 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-90 z-10"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-purple-900/50 via-black/50 to-indigo-900/50 z-10"></div>
-          <Image
-            src={artist.image || "/placeholder.svg?height=800&width=1600"}
-            alt={artist.name}
-            fill
-            className="object-cover"
-          />
+         
           <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
             <div className="container mx-auto">
               <h1 className="text-5xl font-bold mb-2 text-white">{artist.name}</h1>
@@ -61,12 +56,12 @@ export default function ArtistView({ artist }: ArtistViewProps) {
           </div>
         </div>
 
-        <main className="container mx-auto px-4 py-8 relative z-10 -mt-16">
+        <main className="container mx-auto px-4 py-8 relative z-10">
           <div className="flex flex-col md:flex-row gap-8 mb-12">
             <div className="w-full md:w-64 flex-shrink-0">
               <div className="relative aspect-square rounded-lg overflow-hidden shadow-2xl border-4 border-black">
                 <Image
-                  src={artist.image || "/placeholder.svg?height=300&width=300"}
+                  src={"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Linkin_Park_-_From_Zero_Lead_Press_Photo_-_James_Minchin_III.jpg/800px-Linkin_Park_-_From_Zero_Lead_Press_Photo_-_James_Minchin_III.jpg"}
                   alt={artist.name}
                   fill
                   className="object-cover"
@@ -100,16 +95,6 @@ export default function ArtistView({ artist }: ArtistViewProps) {
               </div>
             </div>
           </div>
-
-          <section className="mb-12">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-indigo-400">
-                Popular Songs
-              </h2>
-              <div className="h-1 flex-1 mx-4 bg-gradient-to-r from-purple-600/20 to-transparent rounded-full"></div>
-            </div>
-            <SongList songs={songs} />
-          </section>
         </main>
       </div>
     </div>

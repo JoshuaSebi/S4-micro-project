@@ -95,25 +95,25 @@ export default function LoginForm() {
             <TabsTrigger value="login" className="data-[state=active]:bg-purple-600">Login</TabsTrigger>
             <TabsTrigger value="register" className="data-[state=active]:bg-purple-600">Register</TabsTrigger>
           </TabsList>
-          <TabsContent value="login">
+          <TabsContent value="login" className="text-white">
             <form onSubmit={handleLogin} className="space-y-4 mt-4">
               <Label>Email</Label>
-              <Input id="email" type="email" required value={loginData.email} onChange={handleLoginChange} />
+              <Input id="email" type="email" placeholder="Email" className="text-black" required value={loginData.email} onChange={handleLoginChange} />
               <Label>Password</Label>
-              <Input id="password" type="password" required value={loginData.password} onChange={handleLoginChange} />
+              <Input id="password" placeholder="Password" type="password" className="text-black" required value={loginData.password} onChange={handleLoginChange} />
               <Button type="submit" disabled={isLoading}>{isLoading ? "Logging in..." : "Login"}</Button>
             </form>
           </TabsContent>
-          <TabsContent value="register">
+          <TabsContent value="register" className="text-white">
             <form onSubmit={handleRegister} className="space-y-4 mt-4">
               <Label>Full Name</Label>
-              <Input id="register-name" required value={registerData.name} onChange={handleRegisterChange} />
+              <Input id="register-name" className="text-black" placeholder="Fullname" required value={registerData.name} onChange={handleRegisterChange} />
               <Label>Age</Label>
-              <Input id="register-age" type="number" required value={registerData.age} onChange={handleRegisterChange} />
+              <Input id="register-age" className="text-black" placeholder="Age" type="number" required value={registerData.age} onChange={handleRegisterChange} />
               <Label>Email</Label>
-              <Input id="register-email" type="email" required value={registerData.email} onChange={handleRegisterChange} />
+              <Input id="register-email" className="text-black" placeholder="Email" type="email" required value={registerData.email} onChange={handleRegisterChange} />
               <Label>Password</Label>
-              <Input id="register-password" type="password" required value={registerData.password} onChange={handleRegisterChange} />
+              <Input id="register-password" className="text-black" placeholder="Password" type="password" required value={registerData.password} onChange={handleRegisterChange} />
               <Button type="submit" disabled={isLoading}>{isLoading ? "Creating account..." : "Create account"}</Button>
             </form>
           </TabsContent>

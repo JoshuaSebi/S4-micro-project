@@ -33,7 +33,7 @@ interface PlaylistDetails {
   name: string
   songCount: number
   createdAt?: string
-  userId : string
+  userId: string
 }
 
 const PlaylistPage = () => {
@@ -52,50 +52,55 @@ const PlaylistPage = () => {
   const fetchPlaylist = async () => {
     try {
       setIsLoading(true)
-    const playListRes = await axios.get(`${API_BASE}/playlist/get-a-playlist/${id}`, {
-      withCredentials:true
-    })
-      
-      
+      const playListRes = await axios.get(`${API_BASE}/playlist/get-a-playlist/${id}`, {
+        withCredentials: true,
+      })
+
       setPlaylist(playListRes.data.playlist)
-      console.log("playlist" ,playListRes.data.playlist)
-      console.log("playlist-var",playlist)
+      console.log("playlist", playListRes.data.playlist)
+      console.log("playlist-var", playlist)
       setError("")
-    } catch (error : any) {
+    } catch (error: any) {
       console.error("Error fetching data:", error)
       setError(error.response?.data?.message || "Failed to load data")
     } finally {
       setIsLoading(false)
     }
   }
-  useEffect(()=>{
+  useEffect(() => {
     fetchPlaylist()
-  } ,[id])
+  }, [id])
 
   const fetchData = async () => {
     try {
       setIsLoading(true)
-    const playListRes = await axios.get(`${API_BASE}/playlist/playlist-songs/${id}`, {
-      withCredentials:true
-    })
-//setPlaylist(playListRes.data)
-      
-      const formattedSongs = playListRes && playListRes.data.songs.map((item: any) => ({
-        id: item.song?.id || item.id,
-        name: item.song?.name || item.name,
-        artist: item.song?.artist ? {
-          id: item.song.artist.id,
-          name: item.song.artist.name
-        } : item.artist ? {
-          id: item.artist.id,
-          name: item.artist.name
-        } : undefined,
-        duration: item.song?.duration || item.duration
-      }))
-      
+      const playListRes = await axios.get(`${API_BASE}/playlist/playlist-songs/${id}`, {
+        withCredentials: true,
+      })
+      //setPlaylist(playListRes.data)
+
+      const formattedSongs =
+        playListRes &&
+        playListRes.data.songs.map((item: any) => ({
+          id: item.song?.id || item.id,
+          name: item.song?.name || item.name,
+          artist: item.song?.artist
+            ? {
+                id: item.song.artist.id,
+                name: item.song.artist.name,
+              }
+            : item.artist
+              ? {
+                  id: item.artist.id,
+                  name: item.artist.name,
+                }
+              : undefined,
+          duration: item.song?.duration || item.duration,
+        }))
+
       setSongs(formattedSongs)
       setError("")
-    } catch (error : any) {
+    } catch (error: any) {
       console.error("Error fetching data:", error)
       setError(error.response?.data?.message || "Failed to load data")
     } finally {
@@ -121,10 +126,9 @@ const PlaylistPage = () => {
 
   const searchSongs = async (query: string) => {
     try {
-      const response = await axios.get(
-        `${API_BASE}/songs/search?query=${encodeURIComponent(query)}`,
-        { withCredentials: true }
-      )
+      const response = await axios.get(`${API_BASE}/songs/search?query=${encodeURIComponent(query)}`, {
+        withCredentials: true,
+      })
       setSearchResults(response.data.results || [])
     } catch (error) {
       console.error("Error searching songs:", error)
@@ -137,43 +141,49 @@ const PlaylistPage = () => {
     if (!newSongName) return
     setIsUpdating(true)
     setError("")
-    
+
     try {
       const response = await axios.post(
         `${API_BASE}/songs/add-to-playlist`,
-        { 
+        {
           songName: newSongName,
-          playlistId: id 
+          playlistId: id,
         },
-        { withCredentials: true }
+        { withCredentials: true },
       )
 
-      if (response.data.message === 'Song added to playlist successfully') {
+      if (response.data.message === "Song added to playlist successfully") {
         const addedSong = {
           id: response.data.addedSong.id,
           name: response.data.addedSong.name,
-          artist: response.data.addedSong.artist ? {
-            id: response.data.addedSong.artist.id,
-            name: response.data.addedSong.artist.name
-          } : undefined,
-          duration: response.data.addedSong.duration
+          artist: response.data.addedSong.artist
+            ? {
+                id: response.data.addedSong.artist.id,
+                name: response.data.addedSong.artist.name,
+              }
+            : undefined,
+          duration: response.data.addedSong.duration,
         }
 
-        setSongs(prev => [...prev, addedSong])
-        setPlaylist(prev => prev ? { 
-          ...prev, 
-          songCount: prev.songCount + 1 
-        } : null)
-        
+        setSongs((prev) => [...prev, addedSong])
+        setPlaylist((prev) =>
+          prev
+            ? {
+                ...prev,
+                songCount: prev.songCount + 1,
+              }
+            : null,
+        )
+
         setNewSongName("")
         setSearchQuery("")
         setSearchResults([])
       }
-    } catch (error : any) {
+    } catch (error: any) {
       console.error("Error adding song to playlist:", error)
       const errorMsg = error.response?.data?.message || "Failed to add song to playlist"
       setError(errorMsg)
-      
+
       if (errorMsg.includes("already exists")) {
         await fetchData()
       }
@@ -185,18 +195,18 @@ const PlaylistPage = () => {
   const removeSongFromPlaylist = async (songId: string) => {
     setIsUpdating(true)
     try {
-      await axios.post(
-        `${API_BASE}/songs/remove-from-playlist`, 
-        { songId, playlistId: id }, 
-        { withCredentials: true }
+      await axios.post(`${API_BASE}/songs/remove-from-playlist`, { songId, playlistId: id }, { withCredentials: true })
+
+      setSongs((prev) => prev.filter((song) => song.id !== songId))
+      setPlaylist((prev) =>
+        prev
+          ? {
+              ...prev,
+              songCount: Math.max(0, prev.songCount - 1),
+            }
+          : null,
       )
-      
-      setSongs(prev => prev.filter(song => song.id !== songId))
-      setPlaylist(prev => prev ? { 
-        ...prev, 
-        songCount: Math.max(0, prev.songCount - 1) 
-      } : null)
-    } catch (error : any) {
+    } catch (error: any) {
       console.error("Error removing song from playlist:", error)
       setError(error.response?.data?.message || "Failed to remove song from playlist")
       await fetchData()
@@ -227,9 +237,7 @@ const PlaylistPage = () => {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-2xl md:text-3xl font-bold text-white">
-                {playlist?.name}
-              </CardTitle>
+              <CardTitle className="text-2xl md:text-3xl font-bold text-white">{playlist?.name}</CardTitle>
               <CardDescription className="mt-2 text-gray-400">
                 {playlist?.songCount} {playlist?.songCount === 1 ? "song" : "songs"} in this playlist
               </CardDescription>
@@ -271,16 +279,17 @@ const PlaylistPage = () => {
                         <div>
                           <h4 className="font-medium text-white">{song.name}</h4>
                           {song.artist?.name && (
-                            <p className="text-sm text-gray-400">{song.artist.name}</p>
+                            <a
+                              href={`/artist/${song.artist.id}`}
+                              className="text-sm text-gray-400 hover:text-primary hover:underline"
+                            >
+                              {song.artist.name}
+                            </a>
                           )}
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        {song.duration && (
-                          <span className="text-sm text-gray-400">
-                            {song.duration}
-                          </span>
-                        )}
+                        {song.duration && <span className="text-sm text-gray-400">{song.duration}</span>}
                         <Button
                           variant="ghost"
                           size="icon"
@@ -348,13 +357,13 @@ const PlaylistPage = () => {
                       )}
                     </Button>
                   </div>
-                  
+
                   {searchResults.length > 0 && (
                     <div className="mt-2 border-t border-gray-700 pt-2">
                       <p className="text-sm text-gray-400 mb-2">Search results:</p>
                       <ul className="space-y-1 max-h-60 overflow-y-auto">
                         {searchResults.map((song) => (
-                          <li 
+                          <li
                             key={song.id}
                             className="flex justify-between items-center p-2 hover:bg-gray-800 rounded cursor-pointer"
                             onClick={() => {
@@ -363,9 +372,7 @@ const PlaylistPage = () => {
                             }}
                           >
                             <span className="text-white text-sm">{song.name}</span>
-                            {song.artist?.name && (
-                              <span className="text-gray-400 text-xs">{song.artist.name}</span>
-                            )}
+                            {song.artist?.name && <span className="text-gray-400 text-xs">{song.artist.name}</span>}
                           </li>
                         ))}
                       </ul>
@@ -398,3 +405,4 @@ const PlaylistPage = () => {
 }
 
 export default PlaylistPage
+

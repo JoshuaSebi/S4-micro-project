@@ -8,7 +8,9 @@ const authRoutes = require('./routes/auth.routes.cjs');
 const playlistRoutes = require('./routes/playlist.routes.cjs');
 const songRoutes = require('./routes/song.routes.cjs');
 const userRoutes = require('./routes/user.routes.cjs');
+// const artistRoutes = require('./routes/artist.routes.cjs');
 const addSongRoutes = require('./routes/addSong.routes.cjs');
+const artistRoutes = require("./routes/artist.routes.cjs");
 
 const app = express();
 
@@ -35,6 +37,7 @@ app.use('/api/playlist', playlistRoutes);
 app.use('/api/songs', songRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/dev', addSongRoutes);  // Isolated under /dev
+app.use('/api/', artistRoutes);
 
 // Health check route with improved response
 app.get('/health', (req, res) => {

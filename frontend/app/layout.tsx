@@ -1,5 +1,11 @@
 import type { Metadata } from 'next'
+import {Arimo} from 'next/font/google'
 import './globals.css'
+
+const arimo = Arimo({
+  subsets: ['latin'],
+  variable: '--font-arimo',
+  display: 'swap',})
 
 export const metadata: Metadata = {
   title: 'v0 App',
@@ -14,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className={`${arimo.variable} antialiased`} >{children}</body>
     </html>
   )
 }
