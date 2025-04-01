@@ -4,6 +4,8 @@ export interface Artist {
   genre: string
   bio: string
   image?: string
+  info?: string
+  moreInfoLink?: string
 }
 
 export interface Song {

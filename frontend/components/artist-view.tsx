@@ -1,42 +1,70 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Image from "next/image"
-import { useRouter } from "next/navigation"
-import { Button } from "@/components/ui/button"
-import Navbar from "@/components/navbar"
-import SongList from "@/components/song-list"
-import { Heart, Share2, Play } from "lucide-react"
-import type { Artist } from "@/lib/types"
-import { getSongsByArtist } from "@/lib/data"
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import Navbar from "@/components/navbar";
+import SongList from "@/components/song-list";
+import { Heart, Share2, Play } from "lucide-react";
+import type { Artist } from "@/lib/types";
+import { getSongsByArtist } from "@/lib/data";
 
 interface ArtistViewProps {
-  artist: Artist
+  artist: Artist;
 }
 
 export default function ArtistView({ artist }: ArtistViewProps) {
-  const router = useRouter()
-  const [userName, setUserName] = useState("")
-  const [isFollowing, setIsFollowing] = useState(false)
-  const songs = getSongsByArtist(artist.id)
+  const artistLocal = [
+    {
+      img_url:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/The_Weeknd_with_hand_in_the_air_performing_live_in_Hong_Kong_in_November_2018_%28cropped%29.jpg/800px-The_Weeknd_with_hand_in_the_air_performing_live_in_Hong_Kong_in_November_2018_%28cropped%29.jpg",
+      artistId: "67e8f30397d1c0d1c7558251",
+    },
+    {
+      img_url:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/2/25/Red_Pill_Blues_Tour_%2843272841140%29.jpg/1024px-Red_Pill_Blues_Tour_%2843272841140%29.jpg",
+      artistId: "67e8f30397d1c0d1c7558254",
+    },
+    {
+      img_url:
+      "https://upload.wikimedia.org/wikipedia/commons/5/5a/Ed_Sheeran_at_2012_Frequency_Festival_in_Austria_%287852625324%29.jpg",
+      artistId: "67e8f30397d1c0d1c7558250",
+    },
+    {
+      img_url:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/67/Chester-Shinoda-montreal-2014.jpg/1280px-Chester-Shinoda-montreal-2014.jpg",
+      artistId: "67e8f30397d1c0d1c7558252",
+    },
+    {
+      img_url:
+        "https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcS-MHOI6C-qmmDZPkXAURGQL_D3r4aj4AC7EKKs0FQxAVROeJTsNK-Kjuekco-JW2pcETBkFDziSrUG4pFnI3XI6g",
+
+      artistId: "67e8f30397d1c0d1c7558253",
+    },
+  ];
+  const router = useRouter();
+  const [userName, setUserName] = useState("");
+  const [isFollowing, setIsFollowing] = useState(false);
+  const songs = getSongsByArtist(artist.id);
 
   useEffect(() => {
     // Get user info from localStorage
-    const userInfoString = localStorage.getItem("userInfo")
+    const userInfoString = localStorage.getItem("userInfo");
     if (!userInfoString) {
       // If no user info is found, redirect to login
-      router.push("/")
-      return
+      router.push("/");
+      return;
     }
 
     try {
-      const userInfo = JSON.parse(userInfoString)
-      setUserName(userInfo.name || "User")
+      const userInfo = JSON.parse(userInfoString);
+      setUserName(userInfo.name || "User");
     } catch (error) {
-      console.error("Error parsing user info:", error)
-      router.push("/")
+      console.error("Error parsing user info:", error);
+      router.push("/");
     }
-  }, [router])
+  }, [router]);
 
   return (
     <div className="min-h-screen music-pattern">
@@ -47,10 +75,12 @@ export default function ArtistView({ artist }: ArtistViewProps) {
         <div className="relative h-28 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black opacity-90 z-10"></div>
           <div className="absolute inset-0 bg-gradient-to-r from-purple-900/50 via-black/50 to-indigo-900/50 z-10"></div>
-         
+
           <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
             <div className="container mx-auto">
-              <h1 className="text-5xl font-bold mb-2 text-white">{artist.name}</h1>
+              <h1 className="text-5xl font-bold mb-2 text-white">
+                {artist.name}
+              </h1>
               <p className="text-xl text-zinc-300">{artist.genre}</p>
             </div>
           </div>
@@ -61,10 +91,13 @@ export default function ArtistView({ artist }: ArtistViewProps) {
             <div className="w-full md:w-64 flex-shrink-0">
               <div className="relative aspect-square rounded-lg overflow-hidden shadow-2xl border-4 border-black">
                 <Image
-                  src={"https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Linkin_Park_-_From_Zero_Lead_Press_Photo_-_James_Minchin_III.jpg/800px-Linkin_Park_-_From_Zero_Lead_Press_Photo_-_James_Minchin_III.jpg"}
+                  src={
+                    artistLocal.find((a) => a.artistId === artist.id)
+                      ?.img_url || ""
+                  }
                   alt={artist.name}
                   fill
-                  className="object-cover"
+                  className="object-cover "
                 />
               </div>
             </div>
@@ -77,27 +110,49 @@ export default function ArtistView({ artist }: ArtistViewProps) {
                 </Button>
                 <Button
                   variant="outline"
-                  className={`gap-2 border-zinc-700 ${isFollowing ? "bg-purple-500/20 text-purple-400 border-purple-500/50" : "text-zinc-300"}`}
+                  className={`gap-2 bg-transparent border-zinc-700 ${
+                    isFollowing
+                      ? "bg-purple-500/20 text-purple-400 border-purple-500/50"
+                      : "text-zinc-300"
+                  }`}
                   onClick={() => setIsFollowing(!isFollowing)}
                 >
-                  <Heart className="h-4 w-4" fill={isFollowing ? "currentColor" : "none"} />
+                  <Heart
+                    className="h-4 w-4"
+                    fill={isFollowing ? "currentColor" : "none"}
+                  />
                   {isFollowing ? "Following" : "Follow"}
                 </Button>
-                <Button variant="outline" className="gap-2 border-zinc-700 text-zinc-300">
+                <Button
+                  variant="outline"
+                  className="gap-2 border-zinc-700 bg-transparent text-zinc-300"
+                >
                   <Share2 className="h-4 w-4" />
                   Share
                 </Button>
               </div>
 
-              <div className="mb-6">
-                <h2 className="text-xl font-semibold mb-3 text-white">About</h2>
-                <p className="text-zinc-300 leading-relaxed">{artist.bio}</p>
+              <div className="mb-1">
+                <h2 className="text-xl font-semibold mb-2 text-white ">
+                  About
+                </h2>
+                <p className="text-white leading-relaxed">{artist.info}</p>
+                <div className="mt-4">
+                  <h2 className="text-xl font-semibold mb-2 text-white">
+                    More Info
+                  </h2>
+                  <a
+                    href={artist.moreInfoLink}
+                    className="text-white hover:underline"
+                  >
+                    {artist.moreInfoLink}
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </main>
       </div>
     </div>
-  )
+  );
 }
-
