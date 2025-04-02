@@ -79,7 +79,7 @@ export default function ProfileView() {
             </div>
             <Button
               variant="outline"
-              className="w-full mb-6 border-zinc-700 text-zinc-300 hover:text-white hover:border-purple-500 hover:bg-zinc-800/50"
+              className="w-full mb-6 border-zinc-700 text-gray-700 hover:text-white hover:border-purple-500 hover:bg-zinc-800/50"
             >
               Change Avatar
             </Button>
@@ -141,11 +141,11 @@ export default function ProfileView() {
                       name="name"
                       value={userData.name}
                       onChange={handleChange}
-                      className="pl-10 bg-zinc-800/50 border-zinc-700 focus:border-purple-500"
+                      className="pl-10 bg-zinc-800/50 text-zinc-50 border-zinc-700 focus:border-purple-500"
                     />
                   </div>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 text-zinc-50">
                   <Label htmlFor="email" className="text-zinc-300">
                     Email
                   </Label>
@@ -161,7 +161,7 @@ export default function ProfileView() {
                     />
                   </div>
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-2 text-zinc-50">
                   <Label htmlFor="age" className="text-zinc-300">
                     Age
                   </Label>
