@@ -14,6 +14,8 @@ const artistRoutes = require("./routes/artist.routes.cjs");
 
 const app = express();
 
+//new code
+
 // Middleware
 app.use(cors({
     origin: 'http://localhost:3000', 
